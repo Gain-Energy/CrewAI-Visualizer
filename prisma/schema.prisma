@@ -55,3 +55,57 @@ model Mission {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// Add these models to your existing schema.prisma file
+
+enum MarketplaceItemType {
+  AGENT
+  TOOL
+  WORKFLOW
+  DATASET
+}
+
+model MarketplaceItem {
+  id          Int                @id @default(autoincrement())
+  type        MarketplaceItemType
+  name        String
+  description String
+  author      String
+  version     String
+  downloads   Int                @default(0)
+  rating      Float              @default(0)
+  price       Float?             // null means free
+  tags        String[]
+  image       String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  // Relations
+  reviews     MarketplaceReview[]
+  deployments MarketplaceDeployment[]
+}
+
+model MarketplaceReview {
+  id          Int            @id @default(autoincrement())
+  itemId      Int
+  rating      Float
+  comment     String?
+  authorId    Int
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  item        MarketplaceItem @relation(fields: [itemId], references: [id])
+}
+
+model MarketplaceDeployment {
+  id          Int            @id @default(autoincrement())
+  itemId      Int
+  userId      Int
+  status      String         // e.g., "pending", "active", "failed"
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  item        MarketplaceItem @relation(fields: [itemId], references: [id])
+}

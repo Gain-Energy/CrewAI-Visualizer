@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
 import useNavigation from "@/hook/use_navigation";
 
 const SideNav = () => {
-  const { isMissionsActive, isAgentsActive } = useNavigation();
+  const { isMissionsActive, isAgentsActive, isMarketplaceActive } = useNavigation();
+  const [isRegistryOpen, setIsRegistryOpen] = useState(false);
 
   return (
     <nav className="hidden sm:flex flex-col fixed h-full w-[120px] md:w-[250px] bg-zinc-900/95 backdrop-blur-sm border-r border-zinc-800/40">
@@ -52,11 +53,6 @@ const SideNav = () => {
           `}>
             Missions
           </span>
-          {isMissionsActive && (
-            <div className="ml-auto hidden md:flex items-center gap-2">
-              <div className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-green-400 to-blue-500" />
-            </div>
-          )}
         </Link>
 
         <Link
@@ -83,12 +79,79 @@ const SideNav = () => {
           `}>
             Crew
           </span>
-          {isAgentsActive && (
-            <div className="ml-auto hidden md:flex items-center gap-2">
-              <div className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-green-400 to-blue-500" />
-            </div>
-          )}
         </Link>
+
+        {/* Marketplace Section */}
+        <div className="mt-4 pt-4 border-t border-zinc-800/40">
+          <Link
+            href="/marketplace"
+            className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
+              ${isMarketplaceActive 
+                ? 'bg-gradient-to-r from-green-400/10 to-blue-500/10 text-white' 
+                : 'hover:bg-zinc-800/50 text-zinc-400 hover:text-white'
+              }`}
+          >
+            <div className="relative">
+              <Icon 
+                icon="heroicons:shopping-bag" 
+                width="35" 
+                height="35"
+                className="relative z-10"
+              />
+              {isMarketplaceActive && (
+                <div className="absolute inset-0 bg-green-400/20 rounded-full blur-lg" />
+              )}
+            </div>
+            <span className={`text-lg hidden md:block transition-all
+              ${isMarketplaceActive ? 'font-semibold' : 'font-medium'}
+            `}>
+              Marketplace
+            </span>
+          </Link>
+
+          {/* Registry Dropdown */}
+          <div className="mt-2">
+            <button
+              onClick={() => setIsRegistryOpen(!isRegistryOpen)}
+              className="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
+                hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
+            >
+              <Icon 
+                icon="heroicons:cube-transparent" 
+                width="35" 
+                height="35"
+              />
+              <span className="text-lg hidden md:block font-medium">Registry</span>
+              <Icon 
+                icon="heroicons:chevron-down"
+                className={`w-5 h-5 ml-auto hidden md:block transition-transform ${isRegistryOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {isRegistryOpen && (
+              <div className="pl-14 mt-1 space-y-1 hidden md:block">
+                <Link
+                  href="/registry/publish"
+                  className="flex items-center gap-2 py-2 text-sm text-zinc-400 hover:text-white"
+                >
+                  Publish
+                </Link>
+                <Link
+                  href="/registry/manage"
+                  className="flex items-center gap-2 py-2 text-sm text-zinc-400 hover:text-white"
+                >
+                  Manage
+                </Link>
+                <Link
+                  href="/registry/analytics"
+                  className="flex items-center gap-2 py-2 text-sm text-zinc-400 hover:text-white"
+                >
+                  Analytics
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Bottom Section */}
@@ -96,6 +159,21 @@ const SideNav = () => {
         <div className="hidden md:block px-4 py-3">
           <div className="text-xs text-zinc-500">
             UpstrimaAgentStack v1.0
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <Link 
+              href="/docs"
+              className="text-xs text-zinc-500 hover:text-zinc-300"
+            >
+              Docs
+            </Link>
+            <span className="text-zinc-700">•</span>
+            <Link 
+              href="/support"
+              className="text-xs text-zinc-500 hover:text-zinc-300"
+            >
+              Support
+            </Link>
           </div>
         </div>
       </div>

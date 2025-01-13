@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react";
 import useNavigation from "@/hook/use_navigation";
 
 const BottomNav = () => {
-  const { isMissionsActive, isAgentsActive } = useNavigation();
+  const { isMissionsActive, isAgentsActive, isMarketplaceActive } = useNavigation();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 sm:hidden">
@@ -30,8 +30,8 @@ const BottomNav = () => {
               }`}>
                 <Icon 
                   icon="flat-color-icons:parallel-tasks" 
-                  width="32" 
-                  height="32"
+                  width="28" 
+                  height="28"
                   className="relative z-10"
                 />
                 
@@ -43,7 +43,6 @@ const BottomNav = () => {
                 )}
               </div>
               
-              {/* Label */}
               <span className={`mt-1 text-xs font-medium transition-colors duration-200 ${
                 isMissionsActive 
                   ? 'text-zinc-900 dark:text-zinc-100' 
@@ -57,23 +56,20 @@ const BottomNav = () => {
               href="/agents"
               className="relative group flex flex-col items-center"
             >
-              {/* Background Glow */}
               {isAgentsActive && (
                 <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-500/20 rounded-full blur-xl" />
               )}
               
-              {/* Icon */}
               <div className={`relative transition-all duration-200 ${
                 isAgentsActive ? 'transform scale-110' : 'opacity-60 hover:opacity-100'
               }`}>
                 <Icon 
                   icon="streamline-emojis:robot-face-1" 
-                  width="32" 
-                  height="32"
+                  width="28" 
+                  height="28"
                   className="relative z-10"
                 />
                 
-                {/* Active Indicator */}
                 {isAgentsActive && (
                   <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
                     <div className="w-1 h-1 rounded-full bg-gradient-to-r from-green-400 to-blue-500" />
@@ -81,13 +77,48 @@ const BottomNav = () => {
                 )}
               </div>
               
-              {/* Label */}
               <span className={`mt-1 text-xs font-medium transition-colors duration-200 ${
                 isAgentsActive 
                   ? 'text-zinc-900 dark:text-zinc-100' 
                   : 'text-zinc-600 dark:text-zinc-400'
               }`}>
                 Crew
+              </span>
+            </Link>
+
+            <Link
+              href="/marketplace"
+              className="relative group flex flex-col items-center"
+            >
+              {isMarketplaceActive && (
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-500/20 rounded-full blur-xl" />
+              )}
+              
+              <div className={`relative transition-all duration-200 ${
+                isMarketplaceActive ? 'transform scale-110' : 'opacity-60 hover:opacity-100'
+              }`}>
+                <Icon 
+                  icon="heroicons:shopping-bag" 
+                  width="28" 
+                  height="28"
+                  className={`relative z-10 ${
+                    isMarketplaceActive ? 'text-green-500' : 'text-zinc-400'
+                  }`}
+                />
+                
+                {isMarketplaceActive && (
+                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+                    <div className="w-1 h-1 rounded-full bg-gradient-to-r from-green-400 to-blue-500" />
+                  </div>
+                )}
+              </div>
+              
+              <span className={`mt-1 text-xs font-medium transition-colors duration-200 ${
+                isMarketplaceActive 
+                  ? 'text-zinc-900 dark:text-zinc-100' 
+                  : 'text-zinc-600 dark:text-zinc-400'
+              }`}>
+                Market
               </span>
             </Link>
           </div>

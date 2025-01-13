@@ -1,280 +1,112 @@
-import { gql } from "@apollo/client";
+# Add these queries to your existing graphql_queries.ts file
 
-export const GET_AGENTS = gql`
-  query GetAgents {
-    agents {
-      id
-      role
-      goal
-      backstory
-      tools
-      allowDelegation
-      verbose
-      memory
-      image
-    }
-  }
-`;
-
-export const GET_AGENT_BY_ID = gql`
-  query GetAgentById($id: Int!) {
-    agent(id: $id) {
-      id
-      role
-      goal
-      backstory
-      tools
-      allowDelegation
-      verbose
-      memory
-      image
-      missions {
+export const GET_MARKETPLACE_ITEMS = gql`
+  query GetMarketplaceItems {
+    marketplace {
+      items {
         id
-        name
-      }
-    }
-  }
-`;
-
-export const CREATE_AGENT = gql`
-  mutation CreateAgent(
-    $role: String!
-    $goal: String!
-    $backstory: String
-    $tools: [AgentTool!]
-    $allowDelegation: Boolean!
-    $verbose: Boolean!
-    $memory: Boolean
-  ) {
-    createAgent(
-      role: $role
-      goal: $goal
-      backstory: $backstory
-      tools: $tools
-      allowDelegation: $allowDelegation
-      verbose: $verbose
-      memory: $memory
-    ) {
-      id
-      role
-      goal
-      backstory
-      tools
-      allowDelegation
-      verbose
-      memory
-      image
-    }
-  }
-`;
-
-export const UPDATE_AGENT = gql`
-  mutation UpdateAgent(
-    $id: Int!
-    $role: String
-    $goal: String
-    $backstory: String
-    $tools: [AgentTool!]
-    $allowDelegation: Boolean
-    $verbose: Boolean
-    $memory: Boolean
-  ) {
-    updateAgent(
-      id: $id
-      role: $role
-      goal: $goal
-      backstory: $backstory
-      tools: $tools
-      allowDelegation: $allowDelegation
-      verbose: $verbose
-      memory: $memory
-    ) {
-      id
-      role
-      goal
-      backstory
-      tools
-      allowDelegation
-      verbose
-      memory
-      image
-    }
-  }
-`;
-
-export const DELETE_AGENT = gql`
-  mutation DeleteAgent($id: Int!) {
-    deleteAgent(id: $id) {
-      deleted
-    }
-  }
-`;
-
-export const GET_MISSIONS = gql`
-  query GetMissions {
-    missions {
-      id
-      name
-      crew {
-        id
-        role
-        goal
-        backstory
-        tools
-        allowDelegation
-        verbose
-        memory
-        image
-      }
-      tasks {
+        type
         name
         description
-        expected_output
-        agent {
-          id
-          role
-        }
-      }
-      verbose
-      process
-      result
-    }
-  }
-`;
-
-export const GET_MISSION_BY_ID = gql`
-  query GetMissionById($id: Int!) {
-    mission(id: $id) {
-      id
-      name
-      crew {
-        id
-        role
-        goal
-        backstory
-        tools
-        allowDelegation
-        verbose
-        memory
+        author
+        version
+        downloads
+        rating
+        price
+        tags
         image
+        createdAt
+        updatedAt
       }
-      tasks {
-        name
-        description
-        expected_output
-        agent {
-          id
-          role
-        }
-      }
-      verbose
-      process
-      result
     }
   }
 `;
 
-export const CREATE_MISSION = gql`
-  mutation CreateMission(
+export const GET_MARKETPLACE_ITEM = gql`
+  query GetMarketplaceItem($id: ID!) {
+    marketplaceItem(id: $id) {
+      id
+      type
+      name
+      description
+      author
+      version
+      downloads
+      rating
+      price
+      tags
+      image
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const CREATE_MARKETPLACE_ITEM = gql`
+  mutation CreateMarketplaceItem(
+    $type: String!
     $name: String!
-    $crew: [Int!]
-    $verbose: Boolean
-    $process: MissionProcess
+    $description: String!
+    $author: String!
+    $version: String!
+    $price: Float
+    $tags: [String!]
   ) {
-    createMission(
+    createMarketplaceItem(
+      type: $type
       name: $name
-      crew: $crew
-      verbose: $verbose
-      process: $process
+      description: $description
+      author: $author
+      version: $version
+      price: $price
+      tags: $tags
     ) {
       id
+      type
       name
-      crew {
-        id
-        role
-        goal
-        backstory
-        tools
-        allowDelegation
-        verbose
-        memory
-        image
-      }
-      tasks {
-        name
-        description
-        expected_output
-        agent {
-          id
-          role
-        }
-      }
-      verbose
-      process
-      result
+      description
+      author
+      version
+      price
+      tags
     }
   }
 `;
 
-export const UPDATE_MISSION = gql`
-  mutation UpdateMission(
-    $id: Int!
+export const UPDATE_MARKETPLACE_ITEM = gql`
+  mutation UpdateMarketplaceItem(
+    $id: ID!
+    $type: String
     $name: String
-    $crew: [Int!]
-    $tasks: [TaskInput!]
-    $verbose: Boolean
-    $process: MissionProcess
+    $description: String
+    $version: String
+    $price: Float
+    $tags: [String!]
   ) {
-    updateMission(
+    updateMarketplaceItem(
       id: $id
+      type: $type
       name: $name
-      crew: $crew
-      tasks: $tasks
-      verbose: $verbose
-      process: $process
+      description: $description
+      version: $version
+      price: $price
+      tags: $tags
     ) {
       id
+      type
       name
-      crew {
-        id
-        role
-        goal
-        backstory
-        tools
-        allowDelegation
-        verbose
-        memory
-        image
-      }
-      tasks {
-        name
-        description
-        expected_output
-        agent {
-          id
-          role
-        }
-      }
-      verbose
-      process
-      result
+      description
+      version
+      price
+      tags
     }
   }
 `;
 
-export const DELETE_MISSION = gql`
-  mutation DeleteMission($id: Int!) {
-    deleteMission(id: $id) {
-      deleted
-    }
-  }
-`;
-
-export const RUN_MISSION = gql`
-  mutation RunMission($id: Int!) {
-    runMission(id: $id) {
-      result
-      error
+export const DELETE_MARKETPLACE_ITEM = gql`
+  mutation DeleteMarketplaceItem($id: ID!) {
+    deleteMarketplaceItem(id: $id) {
+      success
       message
     }
   }
