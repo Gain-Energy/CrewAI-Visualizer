@@ -1,35 +1,14 @@
-import { selectTheme } from "@/data/consts";
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { Icon } from "@iconify/react";
+import { motion } from 'framer-motion';
 import { tools } from "@/data/data";
 import { Agent } from "@/types/agent";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import React, { useState } from "react";
-import {
-  TEModal,
-  TEModalBody,
-  TEModalContent,
-  TEModalDialog,
-  TEModalFooter,
-  TEModalHeader,
-  TERipple,
-  TESelect,
-} from "tw-elements-react";
-import { Button, Input, Switch, Textarea } from "@material-tailwind/react";
-import { useMutation } from "@apollo/client";
 import { CREATE_AGENT } from "@/utils/graphql_queries";
-import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-function NewAgentModal(props: {
-  showModal: boolean;
-  setShowModal: Function;
-  onAddNewAgent: Function;
-}) {
-  const {
-    showModal,
-    setShowModal,
-    onAddNewAgent: onAddNewAdent = () => {},
-  } = props;
-
+function NewAgentModal({ showModal, setShowModal, onAddNewAgent = () => {} }) {
   const [tempAgent, setTempAgent] = useState<Agent>({
     role: "",
     goal: "",
@@ -37,218 +16,187 @@ function NewAgentModal(props: {
     tools: [],
     allowDelegation: false,
     verbose: false,
+    memory: false,
   });
 
-  const [createAgent] = useMutation(CREATE_AGENT);
-  const [createAgentLoading, setCreateAgentLoading] = useState(false);
-
-  const handleCreateAgent = async (agentData: Agent) => {
-    setCreateAgentLoading(true);
-    return createAgent({
-      variables: {
-        ...agentData,
-      },
-    }).finally(() => {
-      setCreateAgentLoading(false);
-    });
-  };
-
+  const [createAgent, { loading: createLoading }] = useMutation(CREATE_AGENT);
   const ReactSwal = withReactContent(Swal);
 
+  if (!showModal) return null;
+
   return (
-    <div>
-      <TEModal show={showModal} setShow={setShowModal}>
-        <TEModalDialog size="lg">
-          <TEModalContent style={{ backgroundColor: "#282828" }}>
-            <TEModalHeader>
-              <h1 className="text-xl font-medium leading-normal">
-                Add new agent to you Crew
-              </h1>
-              <Button
-                onClick={() => setShowModal(false)}
-                placeholder={undefined}
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              >
-                <Icon icon="ep:close-bold" width={20} height={20} />
-              </Button>
-            </TEModalHeader>
-            <TEModalBody>
-              <div className="sm:flex">
-                <div className="sm:w-1/2 mx-auto">
-                  <div className="mb-4">
-                    <label className="font-bold text-lg">Role:</label>
-                    <Input
-                      label="Role"
-                      color="blue"
-                      className="text-white"
-                      value={tempAgent?.role}
-                      onChange={(event) => {
-                        setTempAgent((prevState) => ({
-                          ...prevState!,
-                          role: event.target.value,
-                        }));
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+      
+      <div className="relative min-h-screen flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="relative bg-zinc-900 rounded-xl shadow-xl max-w-2xl w-full overflow-hidden"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-500/10 rounded-lg">
+                <Icon icon="streamline-emojis:robot-face-1" className="w-6 h-6 text-green-500" />
+              </div>
+              <h2 className="text-xl font-semibold text-zinc-100">Add New Agent</h2>
+            </div>
+            <button
+              onClick={() => setShowModal(false)}
+              className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            >
+              <Icon icon="ep:close-bold" className="w-5 h-5 text-zinc-400" />
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="p-6 space-y-6">
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">Role</label>
+                <input
+                  type="text"
+                  value={tempAgent.role}
+                  onChange={(e) => setTempAgent({ ...tempAgent, role: e.target.value })}
+                  placeholder="e.g., Research Assistant"
+                  className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg 
+                    focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">Goal</label>
+                <input
+                  type="text"
+                  value={tempAgent.goal}
+                  onChange={(e) => setTempAgent({ ...tempAgent, goal: e.target.value })}
+                  placeholder="e.g., Assist with research and data analysis"
+                  className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg 
+                    focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">Backstory</label>
+                <textarea
+                  value={tempAgent.backstory || ""}
+                  onChange={(e) => setTempAgent({ ...tempAgent, backstory: e.target.value })}
+                  rows={3}
+                  placeholder="Optional background information about the agent..."
+                  className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg 
+                    focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                />
+              </div>
+            </div>
+
+            {/* Tools */}
+            <div>
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Tools</label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {tools.map((tool) => (
+                  <label
+                    key={tool.value}
+                    className="flex items-center gap-2 p-2 rounded-lg bg-zinc-800/50 cursor-pointer hover:bg-zinc-800"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={tempAgent.tools.includes(tool.value)}
+                      onChange={(e) => {
+                        const newTools = e.target.checked
+                          ? [...tempAgent.tools, tool.value]
+                          : tempAgent.tools.filter(t => t !== tool.value);
+                        setTempAgent({ ...tempAgent, tools: newTools });
                       }}
-                      crossOrigin={undefined}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
+                      className="rounded border-zinc-600 text-green-500 focus:ring-green-500"
                     />
-                  </div>
-                  <div className="mb-4">
-                    <label className="font-bold text-lg">Goal:</label>
-                    <Input
-                      label="Goal"
-                      color="blue"
-                      className="text-white"
-                      value={tempAgent?.goal}
-                      onChange={(event) => {
-                        setTempAgent((prevState) => ({
-                          ...prevState!,
-                          goal: event.target.value,
-                        }));
-                      }}
-                      crossOrigin={undefined}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
+                    <span className="text-sm text-zinc-300">{tool.text}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Settings */}
+            <div>
+              <h3 className="text-sm font-medium text-zinc-400 mb-4">Settings</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-zinc-300">Allow Delegation</span>
+                  <button
+                    onClick={() => setTempAgent({ ...tempAgent, allowDelegation: !tempAgent.allowDelegation })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+                      ${tempAgent.allowDelegation ? 'bg-green-500' : 'bg-zinc-700'}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                        ${tempAgent.allowDelegation ? 'translate-x-6' : 'translate-x-1'}`}
                     />
-                  </div>
-                  <div className="mb-4">
-                    <label className="font-bold text-lg">Backstory:</label>
-                    <Textarea
-                      label="Backstory"
-                      color="blue"
-                      className="text-white"
-                      resize={true}
-                      value={tempAgent?.backstory || ""}
-                      onChange={(event) => {
-                        setTempAgent((prevState) => ({
-                          ...prevState!,
-                          backstory: event.target.value,
-                        }));
-                      }}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-zinc-300">Verbose Mode</span>
+                  <button
+                    onClick={() => setTempAgent({ ...tempAgent, verbose: !tempAgent.verbose })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+                      ${tempAgent.verbose ? 'bg-green-500' : 'bg-zinc-700'}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                        ${tempAgent.verbose ? 'translate-x-6' : 'translate-x-1'}`}
                     />
-                  </div>
-                  <div className="flex flex-wrap mb-4">
-                    <span className="font-bold mr-2 text-lg">Tools:</span>
-                    <TESelect
-                      data={tools}
-                      multiple
-                      value={tempAgent?.tools}
-                      onValueChange={(event: any) => {
-                        const newValue = event.map((item: any) => item.value);
-                        setTempAgent((prevState) => ({
-                          ...prevState!,
-                          tools: newValue,
-                        }));
-                      }}
-                      className="w-full"
-                      theme={selectTheme}
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-zinc-300">Memory Enabled</span>
+                  <button
+                    onClick={() => setTempAgent({ ...tempAgent, memory: !tempAgent.memory })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+                      ${tempAgent.memory ? 'bg-green-500' : 'bg-zinc-700'}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                        ${tempAgent.memory ? 'translate-x-6' : 'translate-x-1'}`}
                     />
-                  </div>
-                  <div className="flex items-center mb-4">
-                    <label className="font-bold mx-2">Allow Delegation: </label>
-                    <Switch
-                      crossOrigin={undefined}
-                      color="blue"
-                      defaultChecked={tempAgent?.allowDelegation}
-                      onChange={(event) => {
-                        setTempAgent((prevState) => ({
-                          ...prevState!,
-                          allowDelegation: !!event.target.value,
-                        }));
-                      }}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    />
-                  </div>
-                  <div className="flex items-center mb-4">
-                    <label className="font-bold mx-2">Verbose: </label>
-                    <Switch
-                      crossOrigin={undefined}
-                      color="blue"
-                      defaultChecked={tempAgent?.verbose}
-                      onChange={(event) => {
-                        setTempAgent((prevState) => ({
-                          ...prevState!,
-                          verbose: !!event.target.value,
-                        }));
-                      }}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    />
-                  </div>
-                  <div className="flex items-center mb-4">
-                    <label className="font-bold mx-2">Memory: </label>
-                    <Switch
-                      crossOrigin={undefined}
-                      color="blue"
-                      defaultChecked={tempAgent?.verbose}
-                      onChange={(event) => {
-                        setTempAgent((prevState) => ({
-                          ...prevState!,
-                          memory: !!event.target.value,
-                        }));
-                      }}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    />
-                  </div>
+                  </button>
                 </div>
               </div>
-            </TEModalBody>
+            </div>
+          </div>
 
-            <TEModalFooter>
-              <TERipple rippleColor="light">
-                <Button
-                  color="white"
-                  onClick={() => setShowModal(false)}
-                  placeholder={undefined}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  Close
-                </Button>
-              </TERipple>
-              <TERipple rippleColor="light">
-                <Button
-                  color="green"
-                  loading={createAgentLoading}
-                  disabled={
-                    !tempAgent.role || !tempAgent.goal || createAgentLoading
-                  }
-                  onClick={() => {
-                    handleCreateAgent(tempAgent)
-                      .then(() => {
-                        setShowModal(false);
-                        ReactSwal.fire({
-                          title: "Smart Agent",
-                          text: "New agent joined to your crew",
-                          icon: "success",
-                        });
-                        onAddNewAdent();
-                      })
-                      .catch((error) => {
-                        ReactSwal.fire({
-                          title: "Error",
-                          text: error,
-                          icon: "error",
-                        });
-                      });
-                  }}
-                  className="mx-1"
-                  placeholder={undefined}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  Add
-                </Button>
-              </TERipple>
-            </TEModalFooter>
-          </TEModalContent>
-        </TEModalDialog>
-      </TEModal>
+          {/* Footer */}
+          <div className="flex items-center justify-end gap-3 border-t border-zinc-800 p-6">
+            <button
+              onClick={() => setShowModal(false)}
+              className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                createAgent({ variables: tempAgent })
+                  .then(() => {
+                    setShowModal(false);
+                    onAddNewAgent();
+                    ReactSwal.fire({
+                      title: "Success",
+                      text: "New agent has been added to your crew",
+                      icon: "success"
+                    });
+                  });
+              }}
+              disabled={createLoading || !tempAgent.role || !tempAgent.goal}
+              className="px-4 py-2 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg 
+                hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {createLoading ? "Adding..." : "Add Agent"}
+            </button>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

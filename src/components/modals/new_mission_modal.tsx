@@ -1,31 +1,15 @@
-import { Process, selectTheme } from "@/data/consts";
+import React, { useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { Icon } from "@iconify/react";
+import { motion } from 'framer-motion';
+import { Process } from "@/data/consts";
 import { Mission } from "@/types/mission";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import { Alert, Button, Input, Switch } from "@material-tailwind/react";
-import React, { useState } from "react";
-import {
-  TEModal,
-  TEModalBody,
-  TEModalContent,
-  TEModalDialog,
-  TEModalFooter,
-  TEModalHeader,
-  TERipple,
-  TESelect,
-} from "tw-elements-react";
-import { useMutation, useQuery } from "@apollo/client";
-import { CREATE_MISSION, GET_AGENTS } from "@/utils/graphql_queries";
 import { Agent } from "@/types/agent";
-import withReactContent from "sweetalert2-react-content";
+import { CREATE_MISSION, GET_AGENTS } from "@/utils/graphql_queries";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-function NewMissionModal(props: {
-  showModal: boolean;
-  setShowModal: Function;
-  onAddNewMission: Function;
-}): JSX.Element {
-  const { showModal, setShowModal, onAddNewMission = () => {} } = props;
-
+function NewMissionModal({ showModal, setShowModal, onAddNewMission = () => {} }) {
   const [tempMission, setTempMission] = useState<Mission>({
     name: "",
     crew: [],
@@ -35,226 +19,188 @@ function NewMissionModal(props: {
     result: "",
   });
 
-  const {
-    loading,
-    error: agentsError,
-    data: agentsData,
-  } = useQuery(GET_AGENTS);
-
-  const [createMission] = useMutation(CREATE_MISSION);
-  const [createMissionLoading, setCreateMissionLoading] = useState(false);
-
-  const handleCreateMission = async (missionData: Mission) => {
-    setCreateMissionLoading(true);
-    return createMission({
-      variables: {
-        ...missionData,
-        // TODO: Check why Prisma Schema (id Int) return String.
-        crew: missionData.crew
-          .filter((agent) => Number.parseInt(agent?.id as string))
-          .map((agent) => Number.parseInt(agent.id as string)),
-        tasks: missionData.tasks.map((task) => ({
-          ...task,
-          agent: Number.parseInt(task.agent?.id as string),
-        })),
-      },
-    }).finally(() => {
-      setCreateMissionLoading(false);
-    });
-  };
-
+  const { loading: agentsLoading, error: agentsError, data: agentsData } = useQuery(GET_AGENTS);
+  const [createMission, { loading: createLoading }] = useMutation(CREATE_MISSION);
   const ReactSwal = withReactContent(Swal);
 
+  if (!showModal) return null;
+
   return (
-    <div>
-      <TEModal show={showModal} setShow={setShowModal}>
-        <TEModalDialog size="lg">
-          <TEModalContent style={{ backgroundColor: "#282828" }}>
-            <TEModalHeader>
-              <h1 className="text-xl font-medium leading-normal">
-                Create New Mission
-              </h1>
-              <Button
-                onClick={() => setShowModal(false)}
-                placeholder={undefined}
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              >
-                <Icon icon="ep:close-bold" width={20} height={20} />
-              </Button>
-            </TEModalHeader>
-            <TEModalBody>
-              <div>
-                <div className="mb-4">
-                  <label className="font-bold text-lg">Name:</label>
-                  <Input
-                    label="Name"
-                    color="blue"
-                    className="text-white"
-                    value={tempMission?.name}
-                    onChange={(event) => {
-                      setTempMission((prevState) => ({
-                        ...prevState!,
-                        name: event.target.value,
-                      }));
-                    }}
-                    crossOrigin={undefined}
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  />
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+      
+      <div className="relative min-h-screen flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="relative bg-zinc-900 rounded-xl shadow-xl max-w-2xl w-full overflow-hidden"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg">
+                <Icon icon="material-symbols:deployed-code" className="w-6 h-6 text-green-500" />
+              </div>
+              <h2 className="text-xl font-semibold text-zinc-100">Create New Mission</h2>
+            </div>
+            <button
+              onClick={() => setShowModal(false)}
+              className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            >
+              <Icon icon="ep:close-bold" className="w-5 h-5 text-zinc-400" />
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="p-6 space-y-6">
+            {/* Mission Name */}
+            <div>
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Mission Name</label>
+              <input
+                type="text"
+                value={tempMission.name}
+                onChange={(e) => setTempMission({ ...tempMission, name: e.target.value })}
+                placeholder="e.g., Research Project Analysis"
+                className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg 
+                  focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Crew Selection */}
+            <div>
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Select Crew Members</label>
+              {agentsError ? (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <div className="flex items-center gap-2 text-red-500">
+                    <Icon icon="heroicons:exclamation-circle" className="w-5 h-5" />
+                    <p className="text-sm">{agentsError.message || "Failed to load agents"}</p>
+                  </div>
                 </div>
-                <div className="mb-4">
-                  <span className="font-bold mr-2 text-lg">Crew (Agents):</span>
-                  <br />
-                  {agentsError && (
-                    <>
-                      <div className="w-full my-1">
-                        <Alert
-                          color="yellow"
-                          icon={
-                            <Icon
-                              icon="material-symbols:warning-outline"
-                              fontSize={26}
-                            />
-                          }
-                          className="w-fit"
-                        >
-                          {agentsError?.message ?? "An error occurred."}
-                        </Alert>
-                      </div>
-                    </>
-                  )}
-                  {loading ? (
-                    <Button
-                      variant="text"
-                      loading={true}
-                      placeholder={"Loading"}
-                      className="text-white"
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
+              ) : agentsLoading ? (
+                <div className="flex items-center gap-2 text-zinc-400">
+                  <div className="animate-spin">
+                    <Icon icon="heroicons:arrow-path" className="w-5 h-5" />
+                  </div>
+                  <span>Loading agents...</span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  {agentsData?.agents.map((agent: Agent) => (
+                    <label
+                      key={agent.id}
+                      className="flex items-center gap-2 p-3 rounded-lg bg-zinc-800/50 cursor-pointer 
+                        hover:bg-zinc-800 transition-colors"
                     >
-                      Loading
-                    </Button>
-                  ) : (
-                    <TESelect
-                      data={
-                        agentsData?.agents.map((agent: Agent) => ({
-                          text: agent.role,
-                          value: agent.id,
-                        })) ?? []
-                      }
-                      multiple
-                      onValueChange={(event: any) => {
-                        const newValue = event.map((item: any) => item.value);
-                        const newCrew =
-                          agentsData?.agents.filter((agent: Agent) =>
-                            newValue.includes(agent.id)
-                          ) ?? [];
-                        const newTasks = tempMission.tasks.map((task) => ({
-                          ...task,
-                          agent:
-                            newCrew.find(
-                              (agent: Agent) => agent.id === task.agent?.id
-                            ) ?? null,
-                        }));
-                        setTempMission((prevState) => ({
-                          ...prevState!,
-                          crew: newCrew,
-                          tasks: newTasks,
-                        }));
-                      }}
-                      theme={selectTheme}
+                      <input
+                        type="checkbox"
+                        checked={tempMission.crew.some(a => a.id === agent.id)}
+                        onChange={(e) => {
+                          const newCrew = e.target.checked
+                            ? [...tempMission.crew, agent]
+                            : tempMission.crew.filter(a => a.id !== agent.id);
+                          setTempMission({ ...tempMission, crew: newCrew });
+                        }}
+                        className="rounded border-zinc-600 text-green-500 focus:ring-green-500"
+                      />
+                      <span className="text-sm text-zinc-300">{agent.role}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Settings */}
+            <div>
+              <h3 className="text-sm font-medium text-zinc-400 mb-4">Mission Settings</h3>
+              <div className="space-y-4">
+                {/* Process Selection */}
+                <div className="space-y-2">
+                  <label className="block text-sm text-zinc-400">Process Type</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.values(Process).map((process) => (
+                      <button
+                        key={process}
+                        onClick={() => setTempMission({ ...tempMission, process })}
+                        className={`p-3 rounded-lg border text-sm transition-colors ${
+                          tempMission.process === process
+                            ? 'border-green-500 bg-green-500/10 text-green-500'
+                            : 'border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800'
+                        }`}
+                      >
+                        {process}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Verbose Toggle */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-zinc-300">Verbose Mode</span>
+                  <button
+                    onClick={() => setTempMission({ ...tempMission, verbose: !tempMission.verbose })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+                      ${tempMission.verbose ? 'bg-green-500' : 'bg-zinc-700'}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                        ${tempMission.verbose ? 'translate-x-6' : 'translate-x-1'}`}
                     />
-                  )}
-                </div>
-                <div className="flex items-center mb-4">
-                  <label className="font-bold mx-2">Verbose: </label>
-                  <Switch
-                    crossOrigin={undefined}
-                    color="blue"
-                    defaultChecked={tempMission?.verbose}
-                    onChange={(event) => {
-                      setTempMission((prevState) => ({
-                        ...prevState!,
-                        verbose: !!event.target.value,
-                      }));
-                    }}
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="font-bold text-lg">Process:</label>
-                  <TESelect
-                    data={[
-                      { text: Process.SEQUENTIAL, value: Process.SEQUENTIAL },
-                      {
-                        text: Process.HIERARCHICAL,
-                        value: Process.HIERARCHICAL,
-                      },
-                    ]}
-                    value={tempMission?.process}
-                    onValueChange={(event: any) => {
-                      setTempMission((prevState) => ({
-                        ...prevState!,
-                        process: event?.value,
-                      }));
-                    }}
-                    className="dark:text-black"
-                    theme={selectTheme}
-                  />
+                  </button>
                 </div>
               </div>
-            </TEModalBody>
+            </div>
+          </div>
 
-            <TEModalFooter>
-              <TERipple rippleColor="light">
-                <Button
-                  color="white"
-                  onClick={() => setShowModal(false)}
-                  placeholder={undefined}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  Close
-                </Button>
-              </TERipple>
-              <TERipple rippleColor="light">
-                <Button
-                  color="green"
-                  loading={createMissionLoading}
-                  disabled={!tempMission.name || createMissionLoading}
-                  onClick={() => {
-                    handleCreateMission(tempMission)
-                      .then(() => {
-                        setShowModal(false);
-                        ReactSwal.fire({
-                          title: "New Mission",
-                          text: "New mission created successfully",
-                          icon: "success",
-                        });
-                        onAddNewMission();
-                      })
-                      .catch((error) => {
-                        ReactSwal.fire({
-                          title: "Error",
-                          text: error,
-                          icon: "error",
-                        });
-                      });
-                  }}
-                  className="mx-1"
-                  placeholder={undefined}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  Add
-                </Button>
-              </TERipple>
-            </TEModalFooter>
-          </TEModalContent>
-        </TEModalDialog>
-      </TEModal>
+          {/* Footer */}
+          <div className="flex items-center justify-end gap-3 border-t border-zinc-800 p-6">
+            <button
+              onClick={() => setShowModal(false)}
+              className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                createMission({
+                  variables: {
+                    ...tempMission,
+                    crew: tempMission.crew.map(agent => parseInt(agent.id as string)),
+                    tasks: tempMission.tasks.map(task => ({
+                      ...task,
+                      agent: parseInt(task.agent?.id as string)
+                    }))
+                  }
+                }).then(() => {
+                  setShowModal(false);
+                  onAddNewMission();
+                  ReactSwal.fire({
+                    title: "Success",
+                    text: "New mission has been created",
+                    icon: "success"
+                  });
+                });
+              }}
+              disabled={createLoading || !tempMission.name || tempMission.crew.length === 0}
+              className="px-4 py-2 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg 
+                hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed
+                flex items-center gap-2"
+            >
+              {createLoading ? (
+                <>
+                  <Icon icon="heroicons:arrow-path" className="w-5 h-5 animate-spin" />
+                  <span>Creating...</span>
+                </>
+              ) : (
+                <>
+                  <Icon icon="heroicons:plus" className="w-5 h-5" />
+                  <span>Create Mission</span>
+                </>
+              )}
+            </button>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
