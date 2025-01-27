@@ -1,0 +1,41 @@
+name: Deploy to Azure Container Apps
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY_NAME: crewairegistry
+  APP_NAME: crewai-visualizer
+  RESOURCE_GROUP: crewai-visualizer-rg
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build and push image to ACR
+        run: |
+          az acr build --image ${{ env.APP_NAME }}:${{ github.sha }} \
+            --registry ${{ env.REGISTRY_NAME }} \
+            --file Dockerfile .
+
+      - name: Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          containerAppName: ${{ env.APP_NAME }}
+          imageToDeploy: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+          targetPort: 3000
+          ingress: external
+          environmentVariables: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            NODE_ENV=production
