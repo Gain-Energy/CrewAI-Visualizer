@@ -9,6 +9,7 @@ env:
   REGISTRY_NAME: crewairegistry
   APP_NAME: crewai-visualizer
   RESOURCE_GROUP: crewai-visualizer-rg
+  LOCATION: eastus
 
 jobs:
   build-and-deploy:
@@ -21,6 +22,14 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create Azure Container Registry
+        run: |
+          az acr create \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --name ${{ env.REGISTRY_NAME }} \
+            --sku Basic \
+            --admin-enabled true
 
       - name: Build and push image to ACR
         run: |
@@ -38,4 +47,7 @@ jobs:
           ingress: external
           environmentVariables: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            PYTHON_SITE_PACKAGES=/usr/local/lib/python3.11/site-packages
+            CREW_AI_PY_FILE=/app/src/app/api/graphql/crew_ai.py
             NODE_ENV=production
