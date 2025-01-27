@@ -1,6 +1,10 @@
 # Build stage
 FROM node:18-alpine AS builder
 WORKDIR /app
+
+# Install Python and build dependencies first
+RUN apk add --no-cache python3 make g++ gcc python3-dev
+
 COPY package*.json ./
 RUN npm install
 COPY . .
@@ -17,7 +21,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Install Python and required packages
-RUN apk add --no-cache python3 py3-pip
+RUN apk add --no-cache python3 py3-pip make g++
 
 # Copy built assets
 COPY --from=builder /app/.next ./.next
@@ -30,7 +34,6 @@ COPY --from=python-deps /usr/local/lib/python3.11/site-packages /usr/local/lib/p
 
 # Copy necessary files
 COPY prisma ./prisma
-COPY .env.example ./.env
 
 EXPOSE 3000
 CMD ["npm", "start"]
