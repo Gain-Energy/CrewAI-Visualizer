@@ -1,5 +1,3 @@
-# Add these queries to your existing graphql_queries.ts file
-
 export const GET_MARKETPLACE_ITEMS = gql`
   query GetMarketplaceItems {
     marketplace {
