@@ -12,29 +12,28 @@ RUN npm install
 COPY . .
 
 # Create GraphQL queries file if it doesn't exist
-RUN mkdir -p src/utils && touch src/utils/graphql_queries.ts && \
-    echo 'import { gql } from "@apollo/client";
-
-export const GET_AGENTS = gql`query { agents { id name role goal backstory } }`;
-export const GET_MISSIONS = gql`query { missions { id name description } }`;
-export const UPDATE_AGENT = gql`mutation($id: ID!, $input: AgentInput!) { updateAgent(id: $id, input: $input) { id } }`;
-export const DELETE_AGENT = gql`mutation($id: ID!) { deleteAgent(id: $id) }`;
-export const CREATE_AGENT = gql`mutation($input: AgentInput!) { createAgent(input: $input) { id } }`;
-export const UPDATE_MISSION = gql`mutation($id: ID!, $input: MissionInput!) { updateMission(id: $id, input: $input) { id } }`;
-export const RUN_MISSION = gql`mutation($id: ID!) { runMission(id: $id) }`;
-export const DELETE_MISSION = gql`mutation($id: ID!) { deleteMission(id: $id) }`;
+RUN mkdir -p src/utils && echo 'import { gql } from "@apollo/client";\n\
+export const GET_AGENTS = gql`query { agents { id name role goal backstory } }`;\n\
+export const GET_MISSIONS = gql`query { missions { id name description } }`;\n\
+export const UPDATE_AGENT = gql`mutation($id: ID!, $input: AgentInput!) { updateAgent(id: $id, input: $input) { id } }`;\n\
+export const DELETE_AGENT = gql`mutation($id: ID!) { deleteAgent(id: $id) }`;\n\
+export const CREATE_AGENT = gql`mutation($input: AgentInput!) { createAgent(input: $input) { id } }`;\n\
+export const UPDATE_MISSION = gql`mutation($id: ID!, $input: MissionInput!) { updateMission(id: $id, input: $input) { id } }`;\n\
+export const RUN_MISSION = gql`mutation($id: ID!) { runMission(id: $id) }`;\n\
+export const DELETE_MISSION = gql`mutation($id: ID!) { deleteMission(id: $id) }`;\n\
 export const CREATE_MISSION = gql`mutation($input: MissionInput!) { createMission(input: $input) { id } }`;' > src/utils/graphql_queries.ts
 
 # Create next.config.mjs with proper formatting
-RUN echo 'const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true
-  },
-  images: {
-    unoptimized: true
-  }
-};
-
+RUN echo '/** @type {import("next").NextConfig} */\n\
+const nextConfig = {\n\
+  eslint: {\n\
+    ignoreDuringBuilds: true\n\
+  },\n\
+  images: {\n\
+    unoptimized: true\n\
+  }\n\
+};\n\
+\n\
 export default nextConfig;' > next.config.mjs
 
 # Build the application
