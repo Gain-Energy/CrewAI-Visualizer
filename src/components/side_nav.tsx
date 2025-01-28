@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+"use client";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
 import useNavigation from "@/hook/use_navigation";
 
 const SideNav = () => {
-  const { isMissionsActive, isAgentsActive, isMarketplaceActive } = useNavigation();
+  const { isMissionsActive, isAgentsActive, isMarketplaceActive } =
+    useNavigation();
   const [isRegistryOpen, setIsRegistryOpen] = useState(false);
 
   return (
@@ -32,15 +34,16 @@ const SideNav = () => {
         <Link
           href="/missions"
           className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
-            ${isMissionsActive 
-              ? 'bg-gradient-to-r from-green-400/10 to-blue-500/10 text-white' 
-              : 'hover:bg-zinc-800/50 text-zinc-400 hover:text-white'
+            ${
+              isMissionsActive
+                ? "bg-gradient-to-r from-green-400/10 to-blue-500/10 text-white"
+                : "hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
             }`}
         >
           <div className="relative">
-            <Icon 
-              icon="flat-color-icons:parallel-tasks" 
-              width="35" 
+            <Icon
+              icon="flat-color-icons:parallel-tasks"
+              width="35"
               height="35"
               className="relative z-10"
             />
@@ -48,9 +51,11 @@ const SideNav = () => {
               <div className="absolute inset-0 bg-green-400/20 rounded-full blur-lg" />
             )}
           </div>
-          <span className={`text-lg hidden md:block transition-all
-            ${isMissionsActive ? 'font-semibold' : 'font-medium'}
-          `}>
+          <span
+            className={`text-lg hidden md:block transition-all
+            ${isMissionsActive ? "font-semibold" : "font-medium"}
+          `}
+          >
             Missions
           </span>
         </Link>
@@ -58,15 +63,16 @@ const SideNav = () => {
         <Link
           href="/agents"
           className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
-            ${isAgentsActive 
-              ? 'bg-gradient-to-r from-green-400/10 to-blue-500/10 text-white' 
-              : 'hover:bg-zinc-800/50 text-zinc-400 hover:text-white'
+            ${
+              isAgentsActive
+                ? "bg-gradient-to-r from-green-400/10 to-blue-500/10 text-white"
+                : "hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
             }`}
         >
           <div className="relative">
-            <Icon 
-              icon="streamline-emojis:robot-face-1" 
-              width="35" 
+            <Icon
+              icon="streamline-emojis:robot-face-1"
+              width="35"
               height="35"
               className="relative z-10"
             />
@@ -74,9 +80,11 @@ const SideNav = () => {
               <div className="absolute inset-0 bg-green-400/20 rounded-full blur-lg" />
             )}
           </div>
-          <span className={`text-lg hidden md:block transition-all
-            ${isAgentsActive ? 'font-semibold' : 'font-medium'}
-          `}>
+          <span
+            className={`text-lg hidden md:block transition-all
+            ${isAgentsActive ? "font-semibold" : "font-medium"}
+          `}
+          >
             Crew
           </span>
         </Link>
@@ -86,15 +94,16 @@ const SideNav = () => {
           <Link
             href="/marketplace"
             className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
-              ${isMarketplaceActive 
-                ? 'bg-gradient-to-r from-green-400/10 to-blue-500/10 text-white' 
-                : 'hover:bg-zinc-800/50 text-zinc-400 hover:text-white'
+              ${
+                isMarketplaceActive
+                  ? "bg-gradient-to-r from-green-400/10 to-blue-500/10 text-white"
+                  : "hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
               }`}
           >
             <div className="relative">
-              <Icon 
-                icon="heroicons:shopping-bag" 
-                width="35" 
+              <Icon
+                icon="heroicons:shopping-bag"
+                width="35"
                 height="35"
                 className="relative z-10"
               />
@@ -102,9 +111,11 @@ const SideNav = () => {
                 <div className="absolute inset-0 bg-green-400/20 rounded-full blur-lg" />
               )}
             </div>
-            <span className={`text-lg hidden md:block transition-all
-              ${isMarketplaceActive ? 'font-semibold' : 'font-medium'}
-            `}>
+            <span
+              className={`text-lg hidden md:block transition-all
+              ${isMarketplaceActive ? "font-semibold" : "font-medium"}
+            `}
+            >
               Marketplace
             </span>
           </Link>
@@ -116,15 +127,13 @@ const SideNav = () => {
               className="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
                 hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
             >
-              <Icon 
-                icon="heroicons:cube-transparent" 
-                width="35" 
-                height="35"
-              />
-              <span className="text-lg hidden md:block font-medium">Registry</span>
-              <Icon 
+              <Icon icon="heroicons:cube-transparent" width="35" height="35" />
+              <span className="text-lg hidden md:block font-medium">
+                Registry
+              </span>
+              <Icon
                 icon="heroicons:chevron-down"
-                className={`w-5 h-5 ml-auto hidden md:block transition-transform ${isRegistryOpen ? 'rotate-180' : ''}`}
+                className={`w-5 h-5 ml-auto hidden md:block transition-transform ${isRegistryOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -157,18 +166,16 @@ const SideNav = () => {
       {/* Bottom Section */}
       <div className="p-4 border-t border-zinc-800/40">
         <div className="hidden md:block px-4 py-3">
-          <div className="text-xs text-zinc-500">
-            UpstrimaAgentStack v1.0
-          </div>
+          <div className="text-xs text-zinc-500">UpstrimaAgentStack v1.0</div>
           <div className="flex items-center gap-2 mt-2">
-            <Link 
+            <Link
               href="/docs"
               className="text-xs text-zinc-500 hover:text-zinc-300"
             >
               Docs
             </Link>
             <span className="text-zinc-700">•</span>
-            <Link 
+            <Link
               href="/support"
               className="text-xs text-zinc-500 hover:text-zinc-300"
             >

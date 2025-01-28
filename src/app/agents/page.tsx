@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
+"use client";
+
+import React, { useState } from "react";
+import { useQuery } from "@apollo/client";
 import { Icon } from "@iconify/react";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 import { Agent } from "@/types/agent";
 import { GET_AGENTS } from "@/utils/graphql_queries";
 import AgentModal from "@/components/modals/agent_modal";
@@ -11,7 +13,7 @@ const AgentsPage = () => {
   const [showAgentModal, setShowAgentModal] = useState(false);
   const [showNewAgentModal, setShowNewAgentModal] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent>();
-  
+
   const { loading, error, data, refetch } = useQuery(GET_AGENTS);
 
   if (loading) {
@@ -35,7 +37,7 @@ const AgentsPage = () => {
           <h1 className="text-2xl font-semibold text-zinc-100">Agent Crew</h1>
           <p className="text-zinc-400 mt-1">Manage your intelligent agents</p>
         </div>
-        
+
         <button
           onClick={() => setShowNewAgentModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-400 to-blue-500 
@@ -62,9 +64,14 @@ const AgentsPage = () => {
       {data?.agents.length === 0 && (
         <div className="text-center py-16">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-zinc-800/50 mb-4">
-            <Icon icon="streamline-emojis:robot-face-1" className="w-8 h-8 text-zinc-400" />
+            <Icon
+              icon="streamline-emojis:robot-face-1"
+              className="w-8 h-8 text-zinc-400"
+            />
           </div>
-          <h3 className="text-lg font-medium text-zinc-300 mb-2">No Agents Yet</h3>
+          <h3 className="text-lg font-medium text-zinc-300 mb-2">
+            No Agents Yet
+          </h3>
           <p className="text-zinc-500 max-w-sm mx-auto mb-6">
             Start by adding your first agent to build your intelligent crew
           </p>
@@ -104,7 +111,9 @@ const AgentsPage = () => {
             <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
               <div className="space-y-2">
                 <h3 className="text-lg font-medium text-white">{agent.role}</h3>
-                <p className="text-sm text-zinc-400 line-clamp-2">{agent.goal}</p>
+                <p className="text-sm text-zinc-400 line-clamp-2">
+                  {agent.goal}
+                </p>
               </div>
 
               {/* Tools/Features */}
@@ -133,7 +142,10 @@ const AgentsPage = () => {
               className="absolute top-4 right-4 p-2 bg-zinc-900/80 rounded-lg opacity-0 
                 group-hover:opacity-100 transition-opacity hover:bg-zinc-800"
             >
-              <Icon icon="heroicons:pencil-square" className="w-5 h-5 text-zinc-400" />
+              <Icon
+                icon="heroicons:pencil-square"
+                className="w-5 h-5 text-zinc-400"
+              />
             </button>
           </motion.div>
         ))}

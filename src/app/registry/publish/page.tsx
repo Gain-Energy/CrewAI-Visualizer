@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
+"use client";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import { useMutation } from '@apollo/client';
-import { CREATE_MARKETPLACE_ITEM } from '@/utils/graphql_queries';
-import TWFileInput from '@/components/inputs/file';
+import { useMutation } from "@apollo/client";
+import { CREATE_MARKETPLACE_ITEM } from "@/utils/graphql_queries";
+import TWFileInput from "@/components/inputs/file";
 
 const RegistryPublishPage = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    type: '',
-    name: '',
-    description: '',
-    version: '1.0.0',
-    price: '',
+    type: "",
+    name: "",
+    description: "",
+    version: "1.0.0",
+    price: "",
     tags: [],
-    files: null
+    files: null,
   });
 
   const [createItem, { loading }] = useMutation(CREATE_MARKETPLACE_ITEM);
@@ -39,28 +40,34 @@ const RegistryPublishPage = () => {
         {/* Progress Steps */}
         <div className="flex items-center justify-between mb-8">
           {[
-            { num: 1, label: 'Basic Info' },
-            { num: 2, label: 'Files & Documentation' },
-            { num: 3, label: 'Review & Publish' }
-          ].map((s) => (
+            { num: 1, label: "Basic Info" },
+            { num: 2, label: "Files & Documentation" },
+            { num: 3, label: "Review & Publish" },
+          ].map(s => (
             <div key={s.num} className="flex-1 relative">
-              <div className={`flex items-center ${s.num !== 3 ? 'after:content-[""] after:h-px after:flex-1 after:mx-4 after:bg-zinc-800' : ''}`}>
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
-                  step === s.num
-                    ? 'bg-green-500 text-white'
-                    : step > s.num
-                      ? 'bg-green-500/20 text-green-500'
-                      : 'bg-zinc-800 text-zinc-400'
-                }`}>
+              <div
+                className={`flex items-center ${s.num !== 3 ? 'after:content-[""] after:h-px after:flex-1 after:mx-4 after:bg-zinc-800' : ""}`}
+              >
+                <div
+                  className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                    step === s.num
+                      ? "bg-green-500 text-white"
+                      : step > s.num
+                        ? "bg-green-500/20 text-green-500"
+                        : "bg-zinc-800 text-zinc-400"
+                  }`}
+                >
                   {step > s.num ? (
                     <Icon icon="heroicons:check" className="w-5 h-5" />
                   ) : (
                     s.num
                   )}
                 </div>
-                <span className={`ml-3 text-sm ${
-                  step >= s.num ? 'text-zinc-300' : 'text-zinc-500'
-                }`}>
+                <span
+                  className={`ml-3 text-sm ${
+                    step >= s.num ? "text-zinc-300" : "text-zinc-500"
+                  }`}
+                >
                   {s.label}
                 </span>
               </div>
@@ -80,16 +87,28 @@ const RegistryPublishPage = () => {
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
-                      { value: 'AGENT', label: 'AI Agent', icon: 'streamline-emojis:robot-face-1' },
-                      { value: 'TOOL', label: 'Tool', icon: 'heroicons:wrench-screwdriver' },
-                      { value: 'WORKFLOW', label: 'Workflow', icon: 'heroicons:command-line' }
-                    ].map((type) => (
+                      {
+                        value: "AGENT",
+                        label: "AI Agent",
+                        icon: "streamline-emojis:robot-face-1",
+                      },
+                      {
+                        value: "TOOL",
+                        label: "Tool",
+                        icon: "heroicons:wrench-screwdriver",
+                      },
+                      {
+                        value: "WORKFLOW",
+                        label: "Workflow",
+                        icon: "heroicons:command-line",
+                      },
+                    ].map(type => (
                       <label
                         key={type.value}
                         className={`relative flex flex-col items-center gap-2 p-4 rounded-lg cursor-pointer border ${
                           formData.type === type.value
-                            ? 'border-green-500 bg-green-500/10'
-                            : 'border-zinc-700 hover:bg-zinc-800'
+                            ? "border-green-500 bg-green-500/10"
+                            : "border-zinc-700 hover:bg-zinc-800"
                         }`}
                       >
                         <input
@@ -97,11 +116,18 @@ const RegistryPublishPage = () => {
                           name="type"
                           value={type.value}
                           checked={formData.type === type.value}
-                          onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                          onChange={e =>
+                            setFormData({ ...formData, type: e.target.value })
+                          }
                           className="sr-only"
                         />
-                        <Icon icon={type.icon} className="w-8 h-8 text-green-500" />
-                        <span className="text-sm text-zinc-300">{type.label}</span>
+                        <Icon
+                          icon={type.icon}
+                          className="w-8 h-8 text-green-500"
+                        />
+                        <span className="text-sm text-zinc-300">
+                          {type.label}
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -115,7 +141,9 @@ const RegistryPublishPage = () => {
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg 
                       focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="e.g., Research Assistant Pro"
@@ -128,7 +156,9 @@ const RegistryPublishPage = () => {
                   </label>
                   <textarea
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                     rows={4}
                     className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg 
                       focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -144,7 +174,9 @@ const RegistryPublishPage = () => {
                     <input
                       type="text"
                       value={formData.version}
-                      onChange={(e) => setFormData({ ...formData, version: e.target.value })}
+                      onChange={e =>
+                        setFormData({ ...formData, version: e.target.value })
+                      }
                       className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg 
                         focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       placeholder="1.0.0"
@@ -157,7 +189,9 @@ const RegistryPublishPage = () => {
                     <input
                       type="number"
                       value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      onChange={e =>
+                        setFormData({ ...formData, price: e.target.value })
+                      }
                       className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg 
                         focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       placeholder="0.00"
@@ -176,7 +210,9 @@ const RegistryPublishPage = () => {
                   </label>
                   <TWFileInput
                     accept=".py,.json,.yaml,.md"
-                    onChange={(e) => setFormData({ ...formData, files: e.target.files })}
+                    onChange={e =>
+                      setFormData({ ...formData, files: e.target.files })
+                    }
                   />
                   <p className="mt-2 text-sm text-zinc-500">
                     Supported formats: Python files, JSON, YAML, Markdown
@@ -220,7 +256,7 @@ const RegistryPublishPage = () => {
                   <div className="flex items-center justify-between p-4 rounded-lg bg-zinc-800">
                     <span className="text-zinc-400">Price</span>
                     <span className="text-zinc-100">
-                      {formData.price ? `$${formData.price}` : 'Free'}
+                      {formData.price ? `$${formData.price}` : "Free"}
                     </span>
                   </div>
                 </div>
@@ -233,8 +269,9 @@ const RegistryPublishPage = () => {
                       className="mt-1 rounded border-zinc-700 text-green-500 focus:ring-green-500"
                     />
                     <span className="text-sm text-zinc-300">
-                      I confirm that this component complies with Upstrima's marketplace guidelines
-                      and I have the rights to distribute this content.
+                      I confirm that this component complies with Upstrima's
+                      marketplace guidelines and I have the rights to distribute
+                      this content.
                     </span>
                   </label>
                 </div>
@@ -254,7 +291,7 @@ const RegistryPublishPage = () => {
               ) : (
                 <div />
               )}
-              
+
               <button
                 type="button"
                 onClick={() => {
@@ -270,11 +307,14 @@ const RegistryPublishPage = () => {
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
-                    <Icon icon="heroicons:arrow-path" className="w-5 h-5 animate-spin" />
+                    <Icon
+                      icon="heroicons:arrow-path"
+                      className="w-5 h-5 animate-spin"
+                    />
                     <span>Publishing...</span>
                   </div>
                 ) : (
-                  <span>{step === 3 ? 'Publish' : 'Continue'}</span>
+                  <span>{step === 3 ? "Publish" : "Continue"}</span>
                 )}
               </button>
             </div>

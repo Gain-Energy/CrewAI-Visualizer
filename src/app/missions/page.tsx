@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_MISSIONS } from '@/utils/graphql_queries';
-import MissionModal from '@/components/modals/mission_modal';
-import NewMissionModal from '@/components/modals/new_mission_modal';
-import { Mission } from '@/types/mission';
-import { Icon } from '@iconify/react/dist/iconify.js';
-import { Alert, Button } from '@material-tailwind/react';
+"use client";
+import React, { useState } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_MISSIONS } from "@/utils/graphql_queries";
+import MissionModal from "@/components/modals/mission_modal";
+import NewMissionModal from "@/components/modals/new_mission_modal";
+import { Mission } from "@/types/mission";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import { Alert, Button } from "@material-tailwind/react";
 
 const MissionsPage = () => {
   const [showMissionModal, setShowMissionModal] = useState(false);
@@ -33,7 +34,9 @@ const MissionsPage = () => {
       <div className="w-full p-4">
         <Alert
           color="red"
-          icon={<Icon icon="material-symbols:warning-outline" className="w-6 h-6" />}
+          icon={
+            <Icon icon="material-symbols:warning-outline" className="w-6 h-6" />
+          }
           className="bg-red-50 border border-red-200 rounded-xl"
         >
           <p className="font-medium text-red-700">
@@ -64,11 +67,17 @@ const MissionsPage = () => {
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
             <Alert
               color="blue"
-              icon={<Icon icon="material-symbols:info-outline" className="w-6 h-6" />}
+              icon={
+                <Icon
+                  icon="material-symbols:info-outline"
+                  className="w-6 h-6"
+                />
+              }
               className="bg-transparent border-none p-0"
             >
               <p className="font-medium text-blue-700">
-                No missions yet. Click the button above to create your first mission.
+                No missions yet. Click the button above to create your first
+                mission.
               </p>
             </Alert>
           </div>
@@ -99,7 +108,7 @@ const MissionsPage = () => {
                       <span className="flex h-2 w-2 rounded-full bg-green-400" />
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
                     <span className="flex items-center gap-1">
                       <Icon icon="mdi:agent" className="w-4 h-4" />

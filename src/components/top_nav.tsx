@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+"use client";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -14,10 +15,7 @@ const TopNav = () => {
           <div className="px-4 py-2">
             <div className="flex items-center justify-between">
               {/* Logo */}
-              <Link 
-                href="/" 
-                className="relative group flex items-center"
-              >
+              <Link href="/" className="relative group flex items-center">
                 <Image
                   src="/crewai_logo.png"
                   alt="UpstrimaAgentStack Logo"
@@ -33,11 +31,13 @@ const TopNav = () => {
                 {/* Theme Toggle - If you want to add it */}
                 <button
                   className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-200 dark:bg-zinc-800"
-                  onClick={() => {/* Add theme toggle logic */}}
+                  onClick={() => {
+                    /* Add theme toggle logic */
+                  }}
                 >
-                  <Icon 
-                    icon="heroicons:sun-20-solid" 
-                    className="w-5 h-5 text-zinc-700 dark:text-zinc-300" 
+                  <Icon
+                    icon="heroicons:sun-20-solid"
+                    className="w-5 h-5 text-zinc-700 dark:text-zinc-300"
                   />
                 </button>
 
@@ -46,9 +46,13 @@ const TopNav = () => {
                   className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-200 dark:bg-zinc-800"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
-                  <Icon 
-                    icon={isMenuOpen ? "heroicons:x-mark-20-solid" : "heroicons:bars-3-20-solid"}
-                    className="w-5 h-5 text-zinc-700 dark:text-zinc-300" 
+                  <Icon
+                    icon={
+                      isMenuOpen
+                        ? "heroicons:x-mark-20-solid"
+                        : "heroicons:bars-3-20-solid"
+                    }
+                    className="w-5 h-5 text-zinc-700 dark:text-zinc-300"
                   />
                 </button>
               </div>
@@ -65,7 +69,10 @@ const TopNav = () => {
                 className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Icon icon="flat-color-icons:parallel-tasks" className="w-6 h-6" />
+                <Icon
+                  icon="flat-color-icons:parallel-tasks"
+                  className="w-6 h-6"
+                />
                 <span className="font-medium">Missions</span>
               </Link>
               <Link
@@ -73,16 +80,17 @@ const TopNav = () => {
                 className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Icon icon="streamline-emojis:robot-face-1" className="w-6 h-6" />
+                <Icon
+                  icon="streamline-emojis:robot-face-1"
+                  className="w-6 h-6"
+                />
                 <span className="font-medium">Crew</span>
               </Link>
             </div>
 
             {/* Additional Info */}
             <div className="px-8 py-4 border-t border-zinc-200 dark:border-zinc-800">
-              <p className="text-xs text-zinc-500">
-                UpstrimaAgentStack v1.0
-              </p>
+              <p className="text-xs text-zinc-500">UpstrimaAgentStack v1.0</p>
             </div>
           </div>
         )}
