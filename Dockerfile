@@ -11,13 +11,6 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Add "use client" directive to necessary files
-RUN for file in $(find src/app -name "*.tsx"); do \
-    if grep -q "useState\|useEffect\|useQuery" "$file"; then \
-        echo '"use client";' | cat - "$file" > temp && mv temp "$file"; \
-    fi \
-done
-
 # Build the application
 RUN npm run build
 
