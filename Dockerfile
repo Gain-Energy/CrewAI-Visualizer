@@ -24,17 +24,18 @@ export const DELETE_MISSION = gql`mutation($id: ID!) { deleteMission(id: $id) }`
 export const CREATE_MISSION = gql`mutation($input: MissionInput!) { createMission(input: $input) { id } }`;' > src/utils/graphql_queries.ts
 
 # Create next.config.mjs with proper formatting
-RUN echo '/** @type {import("next").NextConfig} */\n\
-const nextConfig = {\n\
-  eslint: {\n\
-    ignoreDuringBuilds: true\n\
-  },\n\
-  images: {\n\
-    unoptimized: true\n\
-  }\n\
-};\n\
-\n\
-export default nextConfig;' > next.config.mjs
+RUN printf '%s\n' \
+    '/** @type {import("next").NextConfig} */' \
+    'const nextConfig = {' \
+    '  eslint: {' \
+    '    ignoreDuringBuilds: true' \
+    '  },' \
+    '  images: {' \
+    '    unoptimized: true' \
+    '  }' \
+    '};' \
+    '' \
+    'export default nextConfig;' > next.config.mjs
 
 # Build the application
 RUN npm run build
